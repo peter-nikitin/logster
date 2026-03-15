@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 46 38% 96%;
+    --foreground: 222.2 47.4% 11.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+    --primary: 18 76% 35%;
+    --primary-foreground: 42 100% 97%;
+    --secondary: 36 33% 91%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 38 32% 92%;
+    --muted-foreground: 215.4 16.3% 36.9%;
+    --accent: 32 46% 88%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 31 26% 82%;
+    --input: 31 26% 82%;
+    --ring: 18 76% 35%;
+    --radius: 0.95rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-background font-sans text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top left, hsl(var(--primary) / 0.14), transparent 28%),
+      linear-gradient(180deg, hsl(var(--background)), hsl(40 40% 93%));
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.45), transparent 95%);
+  }
+
+  #root {
+    @apply relative;
+  }
+}
