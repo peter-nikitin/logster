@@ -1,50 +1,80 @@
 # Logster
 
-Logster is a browser-only log viewer for uploading, inspecting, and persisting
-JSON log datasets locally.
+Logster is a browser-only log viewer for uploading, inspecting, filtering, and
+persisting JSON log datasets locally. It runs as a static Vite app and does not
+require a backend.
 
-## Commands
+Live demo: `https://peter-nikitin.github.io/logster/`
 
-- `npm run dev`
-- `npm run build`
-- `npm run lint`
-- `npm run test:unit`
-- `npm run test:unit:watch`
-- `npm run test:coverage`
-- `npm run test:e2e`
+## What It Does
+
+- opens bundled example datasets
+- imports JSON log files from the local machine
+- persists uploaded datasets in browser storage
+- restores the last active uploaded dataset after reload
+- filters rows by method and message
+- shows row details alongside the dataset table
+
+## Local Development
+
+### Requirements
+
+- Node `20.19+` or `22.12+`
+- npm `10+`
+
+### Setup
+
+```bash
+npm ci
+```
+
+### Run The App
+
+```bash
+npm run dev
+```
+
+Vite prints the local development URL after startup.
+
+## Available Commands
+
+- `npm run dev` starts the Vite development server
+- `npm run build` runs TypeScript build checks and produces a production bundle
+- `npm run preview` serves the built app locally
+- `npm run lint` runs ESLint
+- `npm run test` runs the unit test suite
+- `npm run test:unit` runs Vitest once
+- `npm run test:unit:watch` runs Vitest in watch mode
+- `npm run test:coverage` runs Vitest with coverage
+- `npm run test:e2e` runs Playwright browser tests
+- `npm run test:typecheck` typechecks the test setup
 
 ## CI/CD
 
-Pull requests run the required CI gate in GitHub Actions:
+Pull requests run the required GitHub Actions validation workflow:
 
 - `npm run lint`
 - `npm run test:unit`
 - `npm run test:typecheck`
 - `npm run build`
 
-Pushes to `main` trigger a GitHub Pages deployment workflow that publishes the
-production `dist/` output.
+Pushes to `main` trigger the GitHub Pages deployment workflow, which publishes
+the production `dist/` output.
 
-GitHub Pages must be configured to use `GitHub Actions` as the source for this
-repository.
-
-Local npm commands remain the source of truth for reproducing CI failures.
+GitHub Pages must be configured to use `GitHub Actions` as the deployment
+source for this repository.
 
 ## Testing
 
-Unit tests use `Vitest` and focus on business logic and presenter behavior.
+Vitest covers business logic, parsing, storage flows, and presenter behavior.
 
-Functional tests use `Playwright` and cover the core browser flows:
+Playwright covers the main browser workflows:
 
-- upload a log file
-- inspect rows in the table
-- persist uploaded datasets
-- restore stored datasets after reload
-- delete stored datasets
+- uploading a dataset
+- inspecting rows in the table
+- persisting uploaded datasets
+- restoring stored datasets after reload
+- deleting stored datasets
 
-Playwright is available for local/browser-functional coverage but is not part of
+Playwright is available for local functional coverage, but it is not part of
 the required pull request CI gate yet.
-
-## Environment Note
-
-The current Vite toolchain in this repo requires Node `20.19+` or `22.12+`.
