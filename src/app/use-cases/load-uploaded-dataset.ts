@@ -14,7 +14,7 @@ export function loadUploadedDataset({
   fileName,
   rawContent,
 }: UploadedDatasetInput): LoadUploadedDatasetResult {
-  const datasetId = `uploaded:${slugify(fileName)}`
+  const datasetId = createUploadedDatasetId(fileName)
 
   try {
     return {
@@ -36,9 +36,17 @@ export function loadUploadedDataset({
   }
 }
 
+function createUploadedDatasetId(fileName: string) {
+  return `uploaded:${slugify(fileName)}:${randomId()}`
+}
+
 function slugify(value: string) {
   return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
+}
+
+function randomId() {
+  return Math.random().toString(36).slice(2, 10)
 }

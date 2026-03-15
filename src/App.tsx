@@ -2,7 +2,7 @@ import { bundledDatasets } from '@/adapters/bundled-datasets/bundled-dataset-sou
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { BundledFileList } from '@/ui/components/bundled-file-list'
+import { DatasetSourcePanel } from '@/ui/components/dataset-source-panel'
 import { DatasetTable } from '@/ui/components/dataset-table'
 import { ErrorState } from '@/ui/components/error-state'
 import { RowDetails } from '@/ui/components/row-details'
@@ -14,42 +14,46 @@ function App() {
     activeDatasetOrigin,
     activeFileId,
     activeRow,
+    deleteStoredDataset,
     error,
     importFile,
     isImporting,
-    selectDataset,
-    selectUploadedDataset,
+    isRestoring,
+    selectBundledDataset,
     selectRow,
-    uploadedDataset,
+    selectStoredDataset,
+    storedDatasets,
   } = useActiveDataset(bundledDatasets)
 
   return (
     <main className="min-h-screen w-full px-4 py-10 sm:px-6 lg:px-8">
       <section className="mb-8 space-y-4">
         <Badge variant="outline" className="border-primary/30 text-primary">
-          Task 03
+          Task 04
         </Badge>
         <div className="space-y-3">
           <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Custom file upload
+            Browser storage and restore
           </h1>
           <p className="max-w-3xl text-base text-muted-foreground sm:text-lg">
-            Select a bundled file or upload your own log JSON, then inspect the
-            rows in the same table viewer and details panel.
+            Upload your own log JSON, keep it in browser storage, and reopen it
+            after a page reload without importing it again.
           </p>
         </div>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
-        <BundledFileList
-          datasets={bundledDatasets}
+        <DatasetSourcePanel
+          bundledDatasets={bundledDatasets}
+          storedDatasets={storedDatasets}
           activeDatasetOrigin={activeDatasetOrigin}
           activeFileId={activeFileId}
           isImporting={isImporting}
-          uploadedDataset={uploadedDataset}
+          isRestoring={isRestoring}
           onImportFile={importFile}
-          onSelect={selectDataset}
-          onSelectUploaded={selectUploadedDataset}
+          onSelectBundled={selectBundledDataset}
+          onSelectStored={selectStoredDataset}
+          onDeleteStored={deleteStoredDataset}
         />
 
         <section className="space-y-6" aria-live="polite">
