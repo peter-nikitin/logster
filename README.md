@@ -19,7 +19,7 @@ Live demo: `https://peter-nikitin.github.io/logster/`
 
 ### Requirements
 
-- Node `20.19+` or `22.12+`
+- Node `22.12+` (recommended stable default)
 - npm `10+`
 
 ### Setup

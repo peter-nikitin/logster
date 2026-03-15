@@ -7,11 +7,12 @@ import { cn } from '@/lib/utils'
 import { Trash2 } from 'lucide-react'
 import { uiTestIds } from '@/ui/test-ids'
 import { UploadDatasetButton } from '@/ui/components/upload-dataset-button'
+import type { OpenedLogDatasetOrigin } from '@/ui/stores/opened-log-dataset-store'
 
 type DatasetSourcePanelProps = {
   bundledDatasets: BundledDatasetFile[]
   storedDatasets: StoredDatasetMeta[]
-  activeDatasetOrigin: 'bundled' | 'uploaded' | null
+  activeDatasetOrigin: OpenedLogDatasetOrigin | null
   activeDatasetId: string | null
   isImporting: boolean
   isRestoring: boolean

@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { uiTestIds } from '@/ui/test-ids'
+import { useLayoutStore } from '@/ui/stores/layout-store'
 
-type WorkspaceSidebarProps = {
+type SidebarProps = {
   children: ReactNode
-  isOpen: boolean
 }
 
-export function WorkspaceSidebar({ children, isOpen }: WorkspaceSidebarProps) {
+export function Sidebar({ children }: SidebarProps) {
+  const isOpen = useLayoutStore((state) => state.isSidebarOpen)
+
   return (
     <aside
       className={cn(

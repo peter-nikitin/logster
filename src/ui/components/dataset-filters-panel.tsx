@@ -1,12 +1,12 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { useEffect, useRef } from 'react'
 import type {
   MessageFacetSummary,
   MethodFacetSummary,
-} from '@/ui/presenters/derive-log-viewer-state'
+} from '@/domain/log-dataset/services/derive-log-visual-state'
 import { uiTestIds } from '@/ui/test-ids'
 import type { MessageFacet } from '@/ui/stores/log-viewer-filter-store'
 import { Ban, ChevronDown, ChevronRight } from 'lucide-react'
@@ -19,8 +19,6 @@ type DatasetFiltersPanelProps = {
   includedMessages: MessageFacet[]
   excludedMessages: MessageFacet[]
   expandedMethods: string[]
-  totalCount: number
-  visibleCount: number
   onMethodIncludedChange: (method: string, included: boolean) => void
   onMethodExcludeToggle: (method: string) => void
   onMessageIncludedChange: (
@@ -41,8 +39,6 @@ export function DatasetFiltersPanel({
   includedMessages,
   excludedMessages,
   expandedMethods,
-  totalCount,
-  visibleCount,
   onMethodIncludedChange,
   onMethodExcludeToggle,
   onMessageIncludedChange,
@@ -66,19 +62,7 @@ export function DatasetFiltersPanel({
       className="h-full"
       data-testid={uiTestIds.filterPanel}
     >
-      <CardHeader className="space-y-2 px-0 pt-0">
-        <div className="flex items-center justify-between gap-2">
-          <div>
-            <CardTitle>Filters</CardTitle>
-            <CardDescription>
-              Drill into a method, pick inner texts with checkboxes, or invert a facet on the right.
-            </CardDescription>
-          </div>
-          <Badge variant="secondary">
-            {visibleCount} / {totalCount || 0}
-          </Badge>
-        </div>
-      </CardHeader>
+    
       <CardContent className="space-y-3 px-0 pb-0 pt-0">
         <section className="space-y-2">
           <div className="flex items-center justify-between gap-2">
