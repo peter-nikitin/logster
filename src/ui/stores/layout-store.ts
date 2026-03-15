@@ -2,14 +2,17 @@ import { create } from 'zustand'
 import { tableColumnConfig } from '@/ui/table-columns'
 
 export type TableColumnId = 'time' | 'delta' | 'method' | 'message' | 'payload'
+export type SidebarPanelId = 'datasets' | 'filters'
 
 type ColumnWidths = Record<TableColumnId, number>
 
 type LayoutStore = {
   isSidebarOpen: boolean
+  activeSidebarPanel: SidebarPanelId
   columnWidths: ColumnWidths
   setSidebarOpen: (isOpen: boolean) => void
   toggleSidebar: () => void
+  openSidebarPanel: (panel: SidebarPanelId) => void
   setColumnWidth: (columnId: TableColumnId, width: number) => void
   fitColumnsToWidth: (availableWidth: number) => void
 }
@@ -32,6 +35,7 @@ function getNextPayloadWidth(currentWidth: number, isSidebarOpening: boolean) {
 
 export const useLayoutStore = create<LayoutStore>((set) => ({
   isSidebarOpen: true,
+  activeSidebarPanel: 'datasets',
   columnWidths: defaultColumnWidths,
   setSidebarOpen: (isOpen) => {
     set((state) => {
@@ -44,6 +48,33 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
         columnWidths: {
           ...state.columnWidths,
           payload: getNextPayloadWidth(state.columnWidths.payload, isOpen),
+        },
+      }
+    })
+  },
+  openSidebarPanel: (panel) => {
+    set((state) => {
+      const shouldOpenSidebar = !state.isSidebarOpen || state.activeSidebarPanel !== panel
+
+      if (shouldOpenSidebar) {
+        return {
+          isSidebarOpen: true,
+          activeSidebarPanel: panel,
+          columnWidths: state.isSidebarOpen
+            ? state.columnWidths
+            : {
+                ...state.columnWidths,
+                payload: getNextPayloadWidth(state.columnWidths.payload, true),
+              },
+        }
+      }
+
+      return {
+        isSidebarOpen: false,
+        activeSidebarPanel: panel,
+        columnWidths: {
+          ...state.columnWidths,
+          payload: getNextPayloadWidth(state.columnWidths.payload, false),
         },
       }
     })

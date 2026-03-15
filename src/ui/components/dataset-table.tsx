@@ -1,5 +1,6 @@
 import type * as React from 'react'
-import type { LogDataset } from '@/domain/log-dataset/entities/log-dataset'
+import type { LogRow } from '@/domain/log-dataset/entities/log-row'
+import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { presentLogRow } from '@/ui/presenters/present-log-row'
 import { tableColumnConfig } from '@/ui/table-columns'
@@ -8,15 +9,19 @@ import { cn } from '@/lib/utils'
 import { useLayoutStore, type TableColumnId } from '@/ui/stores/layout-store'
 
 type DatasetTableProps = {
-  dataset: LogDataset
+  rows: LogRow[]
   activeRowId: string | null
+  markedRowIds: Set<string>
   onSelectRow: (rowId: string) => void
+  onClearFilters: () => void
 }
 
 export function DatasetTable({
-  dataset,
+  rows,
   activeRowId,
+  markedRowIds,
   onSelectRow,
+  onClearFilters,
 }: DatasetTableProps) {
   const columnWidths = useLayoutStore((state) => state.columnWidths)
   const setColumnWidth = useLayoutStore((state) => state.setColumnWidth)
@@ -100,16 +105,38 @@ export function DatasetTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {dataset.rows.map((row) => {
+          {rows.length === 0 ? (
+            <TableRow className="hover:bg-transparent">
+              <TableCell colSpan={tableColumnConfig.length} className="px-6 py-10">
+                <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-muted/20 px-6 py-8 text-center">
+                  <p className="text-sm font-medium text-foreground">
+                    No rows match the current filter stack.
+                  </p>
+                  <p className="max-w-md text-sm text-muted-foreground">
+                    Adjust the method action or text query to bring rows back into view.
+                  </p>
+                  <Button type="button" variant="outline" size="sm" onClick={onClearFilters}>
+                    Clear filters
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : null}
+          {rows.map((row) => {
             const presentedRow = presentLogRow(row)
             const isActive = row.id === activeRowId
+            const isMarked = markedRowIds.has(row.id)
 
             return (
               <TableRow
                 key={row.id}
                 data-testid={uiTestIds.datasetRow}
                 data-state={isActive ? 'selected' : undefined}
-                className={cn('cursor-pointer', isActive && 'bg-muted/70')}
+                className={cn(
+                  'cursor-pointer',
+                  isActive && 'bg-muted/70',
+                  !isActive && isMarked && 'bg-amber-100/70',
+                )}
                 onClick={() => onSelectRow(row.id)}
               >
                 <TableCell

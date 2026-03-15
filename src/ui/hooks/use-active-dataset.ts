@@ -31,7 +31,7 @@ type ActiveDatasetState = {
   selectBundledDataset: (fileId: string) => void
   selectStoredDataset: (datasetId: string) => Promise<void>
   deleteStoredDataset: (datasetId: string) => Promise<void>
-  selectRow: (rowId: string) => void
+  selectRow: (rowId: string | null) => void
 }
 
 export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetState {
@@ -47,9 +47,7 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
   const [isRestoring, setIsRestoring] = useState(true)
   const [storedDatasets, setStoredDatasets] = useState<StoredDatasetMeta[]>([])
   const activeRow =
-    activeDataset?.rows.find((candidate) => candidate.id === activeRowId) ??
-    activeDataset?.rows[0] ??
-    null
+    activeDataset?.rows.find((candidate) => candidate.id === activeRowId) ?? null
 
   useEffect(() => {
     setActiveDatasetSelection(null, null)
@@ -299,8 +297,13 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
     }
   }
 
-  function selectRow(rowId: string) {
+  function selectRow(rowId: string | null) {
     if (!activeDataset) {
+      setActiveRowId(null)
+      return
+    }
+
+    if (rowId === null) {
       setActiveRowId(null)
       return
     }

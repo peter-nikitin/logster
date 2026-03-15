@@ -25,7 +25,7 @@ Current increment order:
 5. `[done] task-09-testing-coverage-strategy.md`
 6. `[done] task-10-screen-refactor-collapsible-sidebar-and-adjustable-columns.md`
 7. `[done] task-08-resilience-and-empty-states.md`
-8. `[todo] task-05-filters-and-row-details.md`
+8. `[done] task-05-filters-and-row-details.md`
 9. `[todo] task-06-time-gap-analysis.md`
 10. `[todo] task-07-multi-file-library.md`
 
