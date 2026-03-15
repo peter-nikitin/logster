@@ -29,8 +29,6 @@ describe('DatasetFiltersPanel', () => {
         includedMessages={[]}
         excludedMessages={[]}
         expandedMethods={['[alpha]']}
-        totalCount={3}
-        visibleCount={1}
         onMethodIncludedChange={onMethodIncludedChange}
         onMethodExcludeToggle={onMethodExcludeToggle}
         onMessageIncludedChange={onMessageIncludedChange}
@@ -71,7 +69,7 @@ describe('DatasetFiltersPanel', () => {
       message: 'special trace',
     })
     expect(onClearFilters).toHaveBeenCalledOnce()
-    expect(screen.getByText('1 / 3')).toBeVisible()
+    expect(screen.getByText('Facet tree')).toBeVisible()
   })
 
   it('shows a dataset prompt when disabled', () => {
@@ -84,8 +82,6 @@ describe('DatasetFiltersPanel', () => {
         includedMessages={[]}
         excludedMessages={[]}
         expandedMethods={[]}
-        totalCount={0}
-        visibleCount={0}
         onMethodIncludedChange={vi.fn()}
         onMethodExcludeToggle={vi.fn()}
         onMessageIncludedChange={vi.fn()}

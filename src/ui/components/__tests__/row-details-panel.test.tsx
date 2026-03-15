@@ -25,20 +25,18 @@ describe('RowDetailsPanel', () => {
     )
 
     expect(screen.getByTestId(uiTestIds.rowDetailsPanel)).toBeVisible()
-    expect(screen.getByText('[use-tab-content]')).toBeVisible()
+    expect(screen.getByText('Payload')).toBeVisible()
     expect(screen.getByTestId(uiTestIds.payloadJsonViewer)).toBeVisible()
+    expect(screen.getByLabelText('collapse JSON')).toBeVisible()
 
     fireEvent.click(screen.getByLabelText('collapse JSON'))
 
     expect(screen.getByLabelText('expand JSON')).toBeVisible()
-    expect(screen.getByText(/"component mounted"/)).toBeVisible()
   })
 
   it('shows an empty prompt when no row is selected', () => {
     render(<RowDetailsPanel row={null} />)
 
-    expect(
-      screen.getByText('Select a visible row to inspect its metadata and payload.'),
-    ).toBeVisible()
+    expect(screen.getByText('Select a visible row to inspect its payload.')).toBeVisible()
   })
 })
