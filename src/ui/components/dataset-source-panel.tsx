@@ -12,7 +12,7 @@ type DatasetSourcePanelProps = {
   bundledDatasets: BundledDatasetFile[]
   storedDatasets: StoredDatasetMeta[]
   activeDatasetOrigin: 'bundled' | 'uploaded' | null
-  activeFileId: string | null
+  activeDatasetId: string | null
   isImporting: boolean
   isRestoring: boolean
   onImportFile: (file: File) => Promise<void>
@@ -25,7 +25,7 @@ export function DatasetSourcePanel({
   bundledDatasets,
   storedDatasets,
   activeDatasetOrigin,
-  activeFileId,
+  activeDatasetId,
   isImporting,
   isRestoring,
   onImportFile,
@@ -74,7 +74,7 @@ export function DatasetSourcePanel({
 
           {storedDatasets.map((dataset) => {
             const isActive =
-              activeDatasetOrigin === 'uploaded' && dataset.id === activeFileId
+              activeDatasetOrigin === 'uploaded' && dataset.id === activeDatasetId
 
             return (
               <div
@@ -135,7 +135,7 @@ export function DatasetSourcePanel({
 
           {bundledDatasets.map((dataset) => {
             const isActive =
-              activeDatasetOrigin === 'bundled' && dataset.id === activeFileId
+              activeDatasetOrigin === 'bundled' && dataset.id === activeDatasetId
 
             return (
               <Button

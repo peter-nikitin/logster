@@ -27,5 +27,6 @@ Current increment order:
 7. `[todo] task-07-multi-file-library.md`
 8. `[todo] task-08-resilience-and-empty-states.md`
 9. `[todo] task-09-testing-coverage-strategy.md`
+10. `[done] task-10-screen-refactor-collapsible-sidebar-and-adjustable-columns.md`
 
 The first four tasks match the visible milestones defined by the product owner.

@@ -1,8 +1,11 @@
+import type * as React from 'react'
 import type { LogDataset } from '@/domain/log-dataset/entities/log-dataset'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { presentLogRow } from '@/ui/presenters/present-log-row'
+import { tableColumnConfig } from '@/ui/table-columns'
 import { uiTestIds } from '@/ui/test-ids'
 import { cn } from '@/lib/utils'
+import { useLayoutStore, type TableColumnId } from '@/ui/stores/layout-store'
 
 type DatasetTableProps = {
   dataset: LogDataset
@@ -15,16 +18,85 @@ export function DatasetTable({
   activeRowId,
   onSelectRow,
 }: DatasetTableProps) {
+  const columnWidths = useLayoutStore((state) => state.columnWidths)
+  const setColumnWidth = useLayoutStore((state) => state.setColumnWidth)
+  const totalTableWidth = tableColumnConfig.reduce(
+    (total, column) => total + columnWidths[column.id],
+    0,
+  )
+
+  function getColumnStyle(columnId: TableColumnId, minWidth: number) {
+    return {
+      width: columnWidths[columnId],
+      minWidth,
+      transition: 'width 200ms ease',
+    } as const
+  }
+
+  function handleResizeStart(
+    columnId: TableColumnId,
+    minWidth: number,
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) {
+    event.preventDefault()
+
+    const startX = event.clientX
+    const startWidth = columnWidths[columnId]
+
+    function handlePointerMove(moveEvent: MouseEvent) {
+      const delta = moveEvent.clientX - startX
+      setColumnWidth(columnId, Math.max(minWidth, startWidth + delta))
+    }
+
+    function handlePointerUp() {
+      window.removeEventListener('mousemove', handlePointerMove)
+      window.removeEventListener('mouseup', handlePointerUp)
+    }
+
+    window.addEventListener('mousemove', handlePointerMove)
+    window.addEventListener('mouseup', handlePointerUp)
+  }
+
   return (
-    <div className="overflow-hidden" data-testid={uiTestIds.datasetTable}>
-      <Table>
+    <div
+      className="h-full min-h-0 overflow-auto"
+      data-testid={uiTestIds.datasetTable}
+    >
+      <Table
+        className="table-fixed"
+        style={{
+          width: totalTableWidth,
+          minWidth: totalTableWidth,
+        }}
+      >
+        <colgroup>
+          {tableColumnConfig.map((column) => (
+            <col
+              key={column.id}
+              style={getColumnStyle(column.id, column.minWidth)}
+            />
+          ))}
+        </colgroup>
         <TableHeader className="sticky top-0 z-10 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
           <TableRow className="hover:bg-transparent">
-            <TableHead className="min-w-[7rem]">Time</TableHead>
-            <TableHead className="min-w-[6rem]">Delta</TableHead>
-            <TableHead className="min-w-[12rem]">Method</TableHead>
-            <TableHead className="min-w-[18rem]">Message</TableHead>
-            <TableHead className="min-w-[16rem]">Payload</TableHead>
+            {tableColumnConfig.map((column) => (
+              <TableHead
+                key={column.id}
+                className="relative select-none"
+                style={getColumnStyle(column.id, column.minWidth)}
+              >
+                <span>{column.label}</span>
+                <button
+                  type="button"
+                  aria-label={`Resize ${column.label} column`}
+                  data-testid={uiTestIds.tableColumnResizeHandle(column.id)}
+                  className="absolute inset-y-0 right-0 w-2.5 cursor-col-resize rounded-full border-r border-border/70 bg-transparent hover:bg-accent/40"
+                  onMouseDown={(event) =>
+                    handleResizeStart(column.id, column.minWidth, event)
+                  }
+                />
+              </TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -40,21 +112,36 @@ export function DatasetTable({
                 className={cn('cursor-pointer', isActive && 'bg-muted/70')}
                 onClick={() => onSelectRow(row.id)}
               >
-                <TableCell className="font-mono text-xs text-muted-foreground">
+                <TableCell
+                  className="font-mono text-[11px] leading-5 text-muted-foreground"
+                  style={getColumnStyle('time', tableColumnConfig[0].minWidth)}
+                >
                   {presentedRow.timeLabel}
                 </TableCell>
-                <TableCell className="font-mono text-xs">
+                <TableCell
+                  className="font-mono text-[11px] leading-5"
+                  style={getColumnStyle('delta', tableColumnConfig[1].minWidth)}
+                >
                   {presentedRow.deltaLabel}
                 </TableCell>
-                <TableCell className="align-top">
-                  <span className="inline-flex rounded-md bg-secondary px-2 py-1 font-mono text-xs text-secondary-foreground">
+                <TableCell
+                  className="align-top"
+                  style={getColumnStyle('method', tableColumnConfig[2].minWidth)}
+                >
+                  <span className="inline-flex rounded-md bg-secondary px-1.5 py-0.5 font-mono text-[11px] leading-5 text-secondary-foreground">
                     {presentedRow.method}
                   </span>
                 </TableCell>
-                <TableCell className="max-w-[36ch] align-top text-sm text-foreground">
+                <TableCell
+                  className="align-top text-[12px] leading-5 text-foreground"
+                  style={getColumnStyle('message', tableColumnConfig[3].minWidth)}
+                >
                   <p className="line-clamp-2">{presentedRow.message}</p>
                 </TableCell>
-                <TableCell className="max-w-[40ch] align-top font-mono text-xs text-muted-foreground">
+                <TableCell
+                  className="align-top font-mono text-[11px] leading-5 text-muted-foreground"
+                  style={getColumnStyle('payload', tableColumnConfig[4].minWidth)}
+                >
                   <p className="line-clamp-2">{presentedRow.payloadPreview}</p>
                 </TableCell>
               </TableRow>
