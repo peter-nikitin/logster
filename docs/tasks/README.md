@@ -18,13 +18,14 @@ Main path:
 
 Current increment order:
 
-1. `task-01-bundled-files-and-parsed-preview.md`
-2. `task-02-table-view-for-active-dataset.md`
-3. `task-03-custom-file-upload.md`
-4. `task-04-browser-storage-and-restore.md`
-5. `task-05-filters-and-row-details.md`
-6. `task-06-time-gap-analysis.md`
-7. `task-07-multi-file-library.md`
-8. `task-08-resilience-and-empty-states.md`
+1. `[done] task-01-bundled-files-and-parsed-preview.md`
+2. `[done] task-02-table-view-for-active-dataset.md`
+3. `[done] task-03-custom-file-upload.md`
+4. `[done] task-04-browser-storage-and-restore.md`
+5. `[todo] task-05-filters-and-row-details.md`
+6. `[todo] task-06-time-gap-analysis.md`
+7. `[todo] task-07-multi-file-library.md`
+8. `[todo] task-08-resilience-and-empty-states.md`
+9. `[todo] task-09-testing-coverage-strategy.md`
 
 The first four tasks match the visible milestones defined by the product owner.

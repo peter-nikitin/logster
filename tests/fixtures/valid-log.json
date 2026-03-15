@@ -1,0 +1,5 @@
+[
+  [1773330778797, "[page-chat-metrics]", "startSession"],
+  [1773330778825, "[use-tab-content]", "component mounted", { "flags": { "alpha": "1" } }],
+  [1773330778850, "[page-chat-metrics]", "logTime", { "metric": "QuestionsStateSet", "elapsed": 53 }]
+]

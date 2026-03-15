@@ -1,6 +1,7 @@
 import type { LogDataset } from '@/domain/log-dataset/entities/log-dataset'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { presentLogRow } from '@/ui/presenters/present-log-row'
+import { uiTestIds } from '@/ui/test-ids'
 import { cn } from '@/lib/utils'
 
 type DatasetTableProps = {
@@ -15,7 +16,7 @@ export function DatasetTable({
   onSelectRow,
 }: DatasetTableProps) {
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden" data-testid={uiTestIds.datasetTable}>
       <Table>
         <TableHeader className="sticky top-0 z-10 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
           <TableRow className="hover:bg-transparent">
@@ -34,6 +35,7 @@ export function DatasetTable({
             return (
               <TableRow
                 key={row.id}
+                data-testid={uiTestIds.datasetRow}
                 data-state={isActive ? 'selected' : undefined}
                 className={cn('cursor-pointer', isActive && 'bg-muted/70')}
                 onClick={() => onSelectRow(row.id)}

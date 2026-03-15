@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import type { LogRow } from '@/domain/log-dataset/entities/log-row'
 import { presentRowDetails } from '@/ui/presenters/present-row-details'
+import { uiTestIds } from '@/ui/test-ids'
 
 type RowDetailsProps = {
   row: LogRow
@@ -11,7 +12,10 @@ export function RowDetails({ row }: RowDetailsProps) {
   const details = presentRowDetails(row)
 
   return (
-    <Card className="border-border/70 bg-card/95 shadow-sm">
+    <Card
+      className="border-border/70 bg-card/95 shadow-sm"
+      data-testid={uiTestIds.rowDetails}
+    >
       <CardHeader className="gap-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2">

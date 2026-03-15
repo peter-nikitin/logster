@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { Trash2 } from 'lucide-react'
+import { uiTestIds } from '@/ui/test-ids'
 import { UploadDatasetButton } from '@/ui/components/upload-dataset-button'
 
 type DatasetSourcePanelProps = {
@@ -33,7 +34,10 @@ export function DatasetSourcePanel({
   onDeleteStored,
 }: DatasetSourcePanelProps) {
   return (
-    <Card className="border-border/70 bg-card/95 shadow-sm">
+    <Card
+      className="border-border/70 bg-card/95 shadow-sm"
+      data-testid={uiTestIds.datasetSourcePanel}
+    >
       <CardHeader className="space-y-3">
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -75,6 +79,7 @@ export function DatasetSourcePanel({
             return (
               <div
                 key={dataset.id}
+                data-testid={uiTestIds.storedDatasetItem}
                 className={cn(
                   'flex items-stretch gap-2 rounded-xl border border-border/70 p-2',
                   isActive && 'border-primary/40 bg-primary/10',
@@ -107,6 +112,8 @@ export function DatasetSourcePanel({
                   type="button"
                   size="sm"
                   variant="ghost"
+                  aria-label="Delete stored dataset"
+                  data-testid={uiTestIds.storedDatasetDeleteButton}
                   className="self-center text-muted-foreground hover:text-destructive"
                   onClick={() => onDeleteStored(dataset.id)}
                 >

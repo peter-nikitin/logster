@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type * as React from 'react'
 import { FileUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { uiTestIds } from '@/ui/test-ids'
 
 type UploadDatasetButtonProps = {
   isImporting: boolean
@@ -77,6 +78,7 @@ export function UploadDatasetButton({
           type="file"
           accept=".json,application/json"
           className="sr-only"
+          data-testid={uiTestIds.uploadInput}
           onChange={handleFileChange}
         />
         <span className="flex flex-col items-center gap-3">
