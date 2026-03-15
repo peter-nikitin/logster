@@ -13,6 +13,23 @@ JSON log datasets locally.
 - `npm run test:coverage`
 - `npm run test:e2e`
 
+## CI/CD
+
+Pull requests run the required CI gate in GitHub Actions:
+
+- `npm run lint`
+- `npm run test:unit`
+- `npm run test:typecheck`
+- `npm run build`
+
+Pushes to `main` trigger a GitHub Pages deployment workflow that publishes the
+production `dist/` output.
+
+GitHub Pages must be configured to use `GitHub Actions` as the source for this
+repository.
+
+Local npm commands remain the source of truth for reproducing CI failures.
+
 ## Testing
 
 Unit tests use `Vitest` and focus on business logic and presenter behavior.
@@ -24,6 +41,9 @@ Functional tests use `Playwright` and cover the core browser flows:
 - persist uploaded datasets
 - restore stored datasets after reload
 - delete stored datasets
+
+Playwright is available for local/browser-functional coverage but is not part of
+the required pull request CI gate yet.
 
 ## Environment Note
 

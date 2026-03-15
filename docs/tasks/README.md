@@ -28,5 +28,6 @@ Current increment order:
 8. `[done] task-05-filters-and-row-details.md`
 9. `[todo] task-06-time-gap-analysis.md`
 10. `[todo] task-07-multi-file-library.md`
+11. `[todo] task-11-ci-cd-for-pr-checks-and-gh-pages-release.md`
 
 The first four tasks match the visible milestones defined by the product owner.
