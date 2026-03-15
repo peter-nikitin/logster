@@ -2,9 +2,9 @@ import { useEffect, useMemo } from 'react'
 import type { LogDataset } from '@/domain/log-dataset/entities/log-dataset'
 import type { LogRow } from '@/domain/log-dataset/entities/log-row'
 import {
-  deriveLogViewerState,
+  deriveLogVisualState,
   resolveVisibleRowSelection,
-} from '@/ui/presenters/derive-log-viewer-state'
+} from '@/domain/log-dataset/services/derive-log-visual-state'
 import { useLogViewerFilterStore } from '@/ui/stores/log-viewer-filter-store'
 
 type UseLogViewerWorkspaceOptions = {
@@ -35,7 +35,7 @@ export function useLogViewerWorkspace({
 
   const derivedViewerState = useMemo(
     () =>
-      deriveLogViewerState(activeDataset, {
+      deriveLogVisualState(activeDataset, {
         includedMethods,
         excludedMethods,
         includedMessages,

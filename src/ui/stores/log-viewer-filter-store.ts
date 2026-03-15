@@ -1,9 +1,7 @@
 import { create } from 'zustand'
+import type { LogFilterFacet, LogVisualFilterSelection } from '@/domain/log-dataset/entities/log-item'
 
-export type MessageFacet = {
-  method: string
-  message: string
-}
+export type MessageFacet = LogFilterFacet
 
 type LogViewerFilterStore = {
   includedMethods: string[]
@@ -23,6 +21,8 @@ type LogViewerFilterStore = {
   clearFilters: () => void
   resetForDataset: () => void
 }
+
+export type LogViewerFilterSelection = LogVisualFilterSelection
 
 const initialState = {
   includedMethods: [] as string[],

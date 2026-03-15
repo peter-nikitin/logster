@@ -10,7 +10,10 @@ import { restoreStoredDatasets } from '@/app/use-cases/restore-stored-datasets'
 import { saveUploadedDataset } from '@/app/use-cases/save-uploaded-dataset'
 import type { LogDataset } from '@/domain/log-dataset/entities/log-dataset'
 import type { LogRow } from '@/domain/log-dataset/entities/log-row'
-import { useSelectionStore } from '@/ui/stores/selection-store'
+import {
+  useOpenedLogDatasetStore,
+  type OpenedLogDatasetOrigin,
+} from '@/ui/stores/opened-log-dataset-store'
 
 export type WorkspaceFeedback = {
   tone: 'error' | 'warning'
@@ -20,7 +23,7 @@ export type WorkspaceFeedback = {
 
 type ActiveDatasetState = {
   activeDataset: LogDataset | null
-  activeDatasetOrigin: ReturnType<typeof useSelectionStore.getState>['activeDatasetOrigin']
+  activeDatasetOrigin: OpenedLogDatasetOrigin | null
   activeDatasetId: string | null
   activeRow: LogRow | null
   feedback: WorkspaceFeedback | null
@@ -36,11 +39,16 @@ type ActiveDatasetState = {
 
 export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetState {
   const repository = useMemo(() => new IndexedDbDatasetRepository(), [])
-  const activeDatasetId = useSelectionStore((state) => state.activeDatasetId)
-  const activeDatasetOrigin = useSelectionStore((state) => state.activeDatasetOrigin)
-  const activeRowId = useSelectionStore((state) => state.activeRowId)
-  const setActiveDatasetSelection = useSelectionStore((state) => state.setActiveDataset)
-  const setActiveRowId = useSelectionStore((state) => state.setActiveRowId)
+  const openedLogDatasetSource = useOpenedLogDatasetStore(
+    (state) => state.openedLogDatasetSource,
+  )
+  const activeDatasetId = openedLogDatasetSource?.id ?? null
+  const activeDatasetOrigin = openedLogDatasetSource?.origin ?? null
+  const activeRowId = useOpenedLogDatasetStore((state) => state.activeRowId)
+  const setOpenedLogDatasetSource = useOpenedLogDatasetStore(
+    (state) => state.setOpenedLogDatasetSource,
+  )
+  const setActiveRowId = useOpenedLogDatasetStore((state) => state.setActiveRowId)
   const [activeDataset, setActiveDataset] = useState<LogDataset | null>(null)
   const [feedback, setFeedback] = useState<WorkspaceFeedback | null>(null)
   const [isImporting, setIsImporting] = useState(false)
@@ -50,9 +58,9 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
     activeDataset?.rows.find((candidate) => candidate.id === activeRowId) ?? null
 
   useEffect(() => {
-    setActiveDatasetSelection(null, null)
+    setOpenedLogDatasetSource(null)
     setActiveRowId(null)
-  }, [setActiveDatasetSelection, setActiveRowId])
+  }, [setOpenedLogDatasetSource, setActiveRowId])
 
   useEffect(() => {
     let isCancelled = false
@@ -65,18 +73,21 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
           return
         }
 
-        setStoredDatasets(result.datasets)
+          setStoredDatasets(result.datasets)
 
         if (result.lastActiveDataset) {
           setFeedback(null)
           setActiveDataset(result.lastActiveDataset)
-          setActiveDatasetSelection(result.lastActiveDataset.id, 'uploaded')
+          setOpenedLogDatasetSource({
+            id: result.lastActiveDataset.id,
+            origin: 'uploaded',
+          })
           setActiveRowId(result.lastActiveDataset.rows[0]?.id ?? null)
           return
         }
 
         setActiveDataset(null)
-        setActiveDatasetSelection(null, null)
+        setOpenedLogDatasetSource(null)
         setActiveRowId(null)
 
         if (result.lastActiveDatasetMissing) {
@@ -95,7 +106,7 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
         }
 
         setActiveDataset(null)
-        setActiveDatasetSelection(null, null)
+        setOpenedLogDatasetSource(null)
         setActiveRowId(null)
         setFeedback({
           tone: 'warning',
@@ -117,7 +128,7 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
     return () => {
       isCancelled = true
     }
-  }, [repository, setActiveDatasetSelection, setActiveRowId])
+  }, [repository, setOpenedLogDatasetSource, setActiveRowId])
 
   function selectBundledDataset(fileId: string) {
     const file = files.find((candidate) => candidate.id === fileId)
@@ -144,7 +155,10 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
 
     setFeedback(null)
     setActiveDataset(result.dataset)
-    setActiveDatasetSelection(file.id, 'bundled')
+    setOpenedLogDatasetSource({
+      id: file.id,
+      origin: 'bundled',
+    })
     setActiveRowId(result.dataset.rows[0]?.id ?? null)
 
     void repository.setLastActiveId(null).catch((storageError) => {
@@ -178,7 +192,10 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
 
       setFeedback(null)
       setActiveDataset(dataset)
-      setActiveDatasetSelection(dataset.id, 'uploaded')
+      setOpenedLogDatasetSource({
+        id: dataset.id,
+        origin: 'uploaded',
+      })
       setActiveRowId(dataset.rows[0]?.id ?? null)
 
       try {
@@ -225,7 +242,10 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
       }
 
       setActiveDataset(result.dataset)
-      setActiveDatasetSelection(result.dataset.id, 'uploaded')
+      setOpenedLogDatasetSource({
+        id: result.dataset.id,
+        origin: 'uploaded',
+      })
       setActiveRowId(result.dataset.rows[0]?.id ?? null)
       setFeedback(null)
 
@@ -280,7 +300,7 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
 
       if (activeDatasetOrigin === 'uploaded' && activeDatasetId === datasetId) {
         setActiveDataset(null)
-        setActiveDatasetSelection(null, null)
+        setOpenedLogDatasetSource(null)
         setActiveRowId(null)
       }
 

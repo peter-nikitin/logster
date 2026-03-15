@@ -34,8 +34,6 @@ export function SidebarPanel() {
       includedMessages={viewerState.includedMessages}
       excludedMessages={viewerState.excludedMessages}
       expandedMethods={viewerState.expandedMethods}
-      totalCount={viewerState.derivedViewerState.totalCount}
-      visibleCount={viewerState.derivedViewerState.visibleCount}
       onMethodIncludedChange={viewerState.setMethodIncluded}
       onMethodExcludeToggle={viewerState.toggleMethodExclude}
       onMessageIncludedChange={viewerState.setMessageIncluded}
