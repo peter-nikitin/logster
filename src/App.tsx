@@ -1,4 +1,4 @@
-import { AppProvider } from '@/ui/context/app-context'
+import { AppProvider } from '@/ui/context/app-context/app-context'
 import { Content } from '@/ui/components/content'
 import { Sidebar } from '@/ui/components/sidebar'
 import { SidebarPanel } from '@/ui/components/sidebar-panel'

@@ -1,12 +1,12 @@
 import { Filter, FolderOpen } from 'lucide-react'
 import logsterLogo from '@/assets/logster.png'
 import { Button } from '@/components/ui/button'
-import { useWorkspace } from '@/ui/context/app-context'
+import { useAppContext } from '../context/app-context/useAppContext'
 import { uiTestIds } from '@/ui/test-ids'
 import { useLayoutStore } from '@/ui/stores/layout-store'
 
 export function Toolbar() {
-  const { datasetState } = useWorkspace()
+  const { datasetState } = useAppContext()
   const activeDataset = datasetState.activeDataset
   const isSidebarOpen = useLayoutStore((state) => state.isSidebarOpen)
   const activeSidebarPanel = useLayoutStore((state) => state.activeSidebarPanel)

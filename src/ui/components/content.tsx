@@ -4,13 +4,13 @@ import { DatasetTableToolbar } from '@/ui/components/dataset-table-toolbar'
 import { EmptyState } from '@/ui/components/empty-state'
 import { ErrorState } from '@/ui/components/error-state'
 import { RowDetailsPanel } from '@/ui/components/row-details-panel'
-import { useWorkspace } from '@/ui/context/app-context'
+import { useAppContext } from '../context/app-context/useAppContext'
 import { uiTestIds } from '@/ui/test-ids'
 import { useLayoutStore } from '@/ui/stores/layout-store'
 import { useRef, useState } from 'react'
 
 export function Content() {
-  const { datasetState, viewerState } = useWorkspace()
+  const { datasetState, viewerState } = useAppContext()
   const fitColumnsToWidth = useLayoutStore((state) => state.fitColumnsToWidth)
   const isSidebarOpen = useLayoutStore((state) => state.isSidebarOpen)
   const openSidebarPanel = useLayoutStore((state) => state.openSidebarPanel)

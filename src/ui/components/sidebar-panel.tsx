@@ -1,11 +1,11 @@
 import { bundledDatasets } from '@/adapters/bundled-datasets/bundled-dataset-source'
 import { DatasetFiltersPanel } from '@/ui/components/dataset-filters-panel'
 import { DatasetSourcePanel } from '@/ui/components/dataset-source-panel'
-import { useWorkspace } from '@/ui/context/app-context'
+import { useAppContext } from '../context/app-context/useAppContext'
 import { useLayoutStore } from '@/ui/stores/layout-store'
 
 export function SidebarPanel() {
-  const { datasetState, viewerState } = useWorkspace()
+  const { datasetState, viewerState } = useAppContext()
   const activePanel = useLayoutStore((state) => state.activeSidebarPanel)
 
   if (activePanel === 'datasets') {
