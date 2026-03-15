@@ -22,11 +22,11 @@ Current increment order:
 2. `[done] task-02-table-view-for-active-dataset.md`
 3. `[done] task-03-custom-file-upload.md`
 4. `[done] task-04-browser-storage-and-restore.md`
-5. `[todo] task-05-filters-and-row-details.md`
-6. `[todo] task-06-time-gap-analysis.md`
-7. `[todo] task-07-multi-file-library.md`
-8. `[todo] task-08-resilience-and-empty-states.md`
-9. `[todo] task-09-testing-coverage-strategy.md`
-10. `[done] task-10-screen-refactor-collapsible-sidebar-and-adjustable-columns.md`
+5. `[done] task-09-testing-coverage-strategy.md`
+6. `[done] task-10-screen-refactor-collapsible-sidebar-and-adjustable-columns.md`
+7. `[done] task-08-resilience-and-empty-states.md`
+8. `[todo] task-05-filters-and-row-details.md`
+9. `[todo] task-06-time-gap-analysis.md`
+10. `[todo] task-07-multi-file-library.md`
 
 The first four tasks match the visible milestones defined by the product owner.

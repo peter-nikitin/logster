@@ -1,6 +1,7 @@
 import { bundledDatasets } from '@/adapters/bundled-datasets/bundled-dataset-source'
 import { Card, CardContent } from '@/components/ui/card'
 import { DatasetSourcePanel } from '@/ui/components/dataset-source-panel'
+import { EmptyState } from '@/ui/components/empty-state'
 import { DatasetTable } from '@/ui/components/dataset-table'
 import { ErrorState } from '@/ui/components/error-state'
 import { WorkspaceSidebar } from '@/ui/components/workspace-sidebar'
@@ -17,7 +18,7 @@ function App() {
     activeDatasetId,
     activeRow,
     deleteStoredDataset,
-    error,
+    feedback,
     importFile,
     isImporting,
     isRestoring,
@@ -28,6 +29,7 @@ function App() {
   } = useActiveDataset(bundledDatasets)
   const isSidebarOpen = useLayoutStore((state) => state.isSidebarOpen)
   const fitColumnsToWidth = useLayoutStore((state) => state.fitColumnsToWidth)
+  const setSidebarOpen = useLayoutStore((state) => state.setSidebarOpen)
   const toggleSidebar = useLayoutStore((state) => state.toggleSidebar)
   const contentRef = useRef<HTMLElement | null>(null)
 
@@ -76,7 +78,13 @@ function App() {
           className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4"
           aria-live="polite"
         >
-          {error ? <ErrorState message={error} /> : null}
+          {feedback ? (
+            <ErrorState
+              title={feedback.title}
+              message={feedback.message}
+              tone={feedback.tone}
+            />
+          ) : null}
 
           {activeDataset ? (
             <Card className="min-h-0 flex-1 overflow-hidden border-border/70 bg-card/95 shadow-sm">
@@ -88,7 +96,13 @@ function App() {
                 />
               </CardContent>
             </Card>
-          ) : null}
+          ) : (
+            <EmptyState
+              isRestoring={isRestoring}
+              isSidebarOpen={isSidebarOpen}
+              onOpenSidebar={() => setSidebarOpen(true)}
+            />
+          )}
         </section>
       </section>
     </main>

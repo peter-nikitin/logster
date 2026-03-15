@@ -8,15 +8,42 @@ describe('saveUploadedDataset', () => {
     const repository = new InMemoryDatasetRepository()
     const dataset = createTestDataset()
 
-    const meta = await saveUploadedDataset(repository, dataset)
+    const result = await saveUploadedDataset(repository, dataset)
 
     expect(repository.lastSavedDataset).toEqual(dataset)
     expect(repository.lastActiveId).toBe(dataset.id)
-    expect(meta).toEqual({
-      id: dataset.id,
-      name: dataset.name,
-      rowCount: dataset.rows.length,
-      savedAt: '2026-01-01T00:00:00.000Z',
+    expect(result).toEqual({
+      meta: {
+        id: dataset.id,
+        name: dataset.name,
+        rowCount: dataset.rows.length,
+        savedAt: '2026-01-01T00:00:00.000Z',
+      },
+      lastActiveSaved: true,
     })
+  })
+
+  it('keeps the saved dataset when persisting the last active id fails', async () => {
+    const dataset = createTestDataset()
+
+    class FailingLastActiveRepository extends InMemoryDatasetRepository {
+      override async setLastActiveId(): Promise<void> {
+        throw new Error('meta store unavailable')
+      }
+    }
+
+    const repository = new FailingLastActiveRepository()
+    const result = await saveUploadedDataset(repository, dataset)
+
+    expect(result).toEqual({
+      meta: {
+        id: dataset.id,
+        name: dataset.name,
+        rowCount: dataset.rows.length,
+        savedAt: '2026-01-01T00:00:00.000Z',
+      },
+      lastActiveSaved: false,
+    })
+    expect(repository.lastSavedDataset).toEqual(dataset)
   })
 })

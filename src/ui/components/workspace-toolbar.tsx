@@ -49,7 +49,13 @@ export function WorkspaceToolbar({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={onFitColumns}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onFitColumns}
+          disabled={!activeDataset}
+        >
           <Columns3Cog className="h-4 w-4" />
           <span>Fit table</span>
         </Button>

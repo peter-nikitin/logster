@@ -11,14 +11,19 @@ import { saveUploadedDataset } from '@/app/use-cases/save-uploaded-dataset'
 import type { LogDataset } from '@/domain/log-dataset/entities/log-dataset'
 import type { LogRow } from '@/domain/log-dataset/entities/log-row'
 import { useSelectionStore } from '@/ui/stores/selection-store'
-import { useStatusStore } from '@/ui/stores/status-store'
+
+export type WorkspaceFeedback = {
+  tone: 'error' | 'warning'
+  title: string
+  message: string
+}
 
 type ActiveDatasetState = {
   activeDataset: LogDataset | null
   activeDatasetOrigin: ReturnType<typeof useSelectionStore.getState>['activeDatasetOrigin']
   activeDatasetId: string | null
   activeRow: LogRow | null
-  error: string | null
+  feedback: WorkspaceFeedback | null
   isImporting: boolean
   isRestoring: boolean
   storedDatasets: StoredDatasetMeta[]
@@ -29,32 +34,17 @@ type ActiveDatasetState = {
   selectRow: (rowId: string) => void
 }
 
-type InitialState = {
-  activeDataset: LogDataset | null
-  activeDatasetOrigin: ReturnType<typeof useSelectionStore.getState>['activeDatasetOrigin']
-  activeDatasetId: string | null
-  activeRow: LogRow | null
-  error: string | null
-}
-
 export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetState {
   const repository = useMemo(() => new IndexedDbDatasetRepository(), [])
-  const initialState = useMemo(() => createInitialState(files), [files])
   const activeDatasetId = useSelectionStore((state) => state.activeDatasetId)
   const activeDatasetOrigin = useSelectionStore((state) => state.activeDatasetOrigin)
   const activeRowId = useSelectionStore((state) => state.activeRowId)
   const setActiveDatasetSelection = useSelectionStore((state) => state.setActiveDataset)
   const setActiveRowId = useSelectionStore((state) => state.setActiveRowId)
-  const error = useStatusStore((state) => state.error)
-  const isImporting = useStatusStore((state) => state.isImporting)
-  const isRestoring = useStatusStore((state) => state.isRestoring)
-  const setError = useStatusStore((state) => state.setError)
-  const setIsImporting = useStatusStore((state) => state.setIsImporting)
-  const setIsRestoring = useStatusStore((state) => state.setIsRestoring)
-
-  const [activeDataset, setActiveDataset] = useState<LogDataset | null>(
-    initialState.activeDataset,
-  )
+  const [activeDataset, setActiveDataset] = useState<LogDataset | null>(null)
+  const [feedback, setFeedback] = useState<WorkspaceFeedback | null>(null)
+  const [isImporting, setIsImporting] = useState(false)
+  const [isRestoring, setIsRestoring] = useState(true)
   const [storedDatasets, setStoredDatasets] = useState<StoredDatasetMeta[]>([])
   const activeRow =
     activeDataset?.rows.find((candidate) => candidate.id === activeRowId) ??
@@ -62,11 +52,9 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
     null
 
   useEffect(() => {
-    setActiveDatasetSelection(initialState.activeDatasetId, initialState.activeDatasetOrigin)
-    setActiveRowId(initialState.activeRow?.id ?? null)
-    setError(initialState.error)
-    setIsRestoring(true)
-  }, [initialState.activeDatasetId, initialState.activeDatasetOrigin, initialState.activeRow, initialState.error, setActiveDatasetSelection, setActiveRowId, setError, setIsRestoring])
+    setActiveDatasetSelection(null, null)
+    setActiveRowId(null)
+  }, [setActiveDatasetSelection, setActiveRowId])
 
   useEffect(() => {
     let isCancelled = false
@@ -82,21 +70,43 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
         setStoredDatasets(result.datasets)
 
         if (result.lastActiveDataset) {
-          setError(null)
+          setFeedback(null)
           setActiveDataset(result.lastActiveDataset)
           setActiveDatasetSelection(result.lastActiveDataset.id, 'uploaded')
           setActiveRowId(result.lastActiveDataset.rows[0]?.id ?? null)
+          return
+        }
+
+        setActiveDataset(null)
+        setActiveDatasetSelection(null, null)
+        setActiveRowId(null)
+
+        if (result.lastActiveDatasetMissing) {
+          setFeedback({
+            tone: 'warning',
+            title: 'Last opened dataset is no longer available',
+            message:
+              'The previously active upload could not be restored. Open a bundled example or import a file to continue.',
+          })
+        } else {
+          setFeedback(null)
         }
       } catch (restoreError) {
         if (isCancelled) {
           return
         }
 
-        setError(
-          restoreError instanceof Error
-            ? `Failed to restore stored datasets: ${restoreError.message}`
-            : 'Failed to restore stored datasets.',
-        )
+        setActiveDataset(null)
+        setActiveDatasetSelection(null, null)
+        setActiveRowId(null)
+        setFeedback({
+          tone: 'warning',
+          title: 'Stored datasets could not be restored',
+          message:
+            restoreError instanceof Error
+              ? `Browser storage is unavailable right now: ${restoreError.message}. You can still open bundled examples or upload a file for this session.`
+              : 'Browser storage is unavailable right now. You can still open bundled examples or upload a file for this session.',
+        })
       } finally {
         if (!isCancelled) {
           setIsRestoring(false)
@@ -109,35 +119,45 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
     return () => {
       isCancelled = true
     }
-  }, [repository, setActiveDatasetSelection, setActiveRowId, setError, setIsRestoring])
+  }, [repository, setActiveDatasetSelection, setActiveRowId])
 
   function selectBundledDataset(fileId: string) {
     const file = files.find((candidate) => candidate.id === fileId)
 
     if (!file) {
-      setActiveDataset(null)
-      setActiveDatasetSelection(fileId, null)
-      setActiveRowId(null)
-      setError(`Unknown bundled dataset: ${fileId}`)
+      setFeedback({
+        tone: 'error',
+        title: 'Bundled dataset not found',
+        message: `The example dataset "${fileId}" is not available.`,
+      })
       return
     }
 
     const result = loadBundledDataset(file)
 
     if (result.status === 'error') {
-      setActiveDataset(null)
-      setActiveDatasetSelection(file.id, 'bundled')
-      setActiveRowId(null)
-      setError(result.message)
+      setFeedback({
+        tone: 'error',
+        title: 'Bundled dataset could not be opened',
+        message: result.message,
+      })
       return
     }
 
-    setError(null)
+    setFeedback(null)
     setActiveDataset(result.dataset)
     setActiveDatasetSelection(file.id, 'bundled')
     setActiveRowId(result.dataset.rows[0]?.id ?? null)
-    void repository.setLastActiveId(null).catch(() => {
-      // Keep bundled selection working even if storage state cannot be updated.
+
+    void repository.setLastActiveId(null).catch((storageError) => {
+      setFeedback({
+        tone: 'warning',
+        title: 'Selection could not be remembered',
+        message:
+          storageError instanceof Error
+            ? `Opened ${file.name}, but browser storage could not clear the previous uploaded selection: ${storageError.message}`
+            : `Opened ${file.name}, but browser storage could not clear the previous uploaded selection.`,
+      })
     })
   }
 
@@ -149,21 +169,41 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
         setStoredDatasets((current) =>
           current.filter((candidate) => candidate.id !== datasetId),
         )
-        setError('Stored dataset is no longer available.')
+        setFeedback({
+          tone: 'warning',
+          title: 'Stored dataset is no longer available',
+          message:
+            'That upload could not be found in browser storage anymore. It has been removed from the list.',
+        })
         return
       }
 
-      setError(null)
+      setFeedback(null)
       setActiveDataset(dataset)
       setActiveDatasetSelection(dataset.id, 'uploaded')
       setActiveRowId(dataset.rows[0]?.id ?? null)
-      await repository.setLastActiveId(dataset.id)
+
+      try {
+        await repository.setLastActiveId(dataset.id)
+      } catch (storageError) {
+        setFeedback({
+          tone: 'warning',
+          title: 'Selection could not be remembered',
+          message:
+            storageError instanceof Error
+              ? `Opened ${dataset.name}, but browser storage could not remember it as the last active dataset: ${storageError.message}`
+              : `Opened ${dataset.name}, but browser storage could not remember it as the last active dataset.`,
+        })
+      }
     } catch (selectionError) {
-      setError(
-        selectionError instanceof Error
-          ? `Failed to open stored dataset: ${selectionError.message}`
-          : 'Failed to open stored dataset.',
-      )
+      setFeedback({
+        tone: 'warning',
+        title: 'Stored dataset could not be opened',
+        message:
+          selectionError instanceof Error
+            ? `Browser storage could not open this upload: ${selectionError.message}`
+            : 'Browser storage could not open this upload.',
+      })
     }
   }
 
@@ -178,33 +218,56 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
       })
 
       if (result.status === 'error') {
-        setActiveDataset(null)
-        setActiveDatasetSelection(null, 'uploaded')
-        setActiveRowId(null)
-        setError(result.message)
+        setFeedback({
+          tone: 'error',
+          title: 'Upload could not be imported',
+          message: result.message,
+        })
         return
       }
 
-      const meta = await saveUploadedDataset(repository, result.dataset)
-
-      setStoredDatasets((current) =>
-        [meta, ...current.filter((candidate) => candidate.id !== meta.id)].sort((left, right) =>
-          right.savedAt.localeCompare(left.savedAt),
-        ),
-      )
-      setError(null)
       setActiveDataset(result.dataset)
       setActiveDatasetSelection(result.dataset.id, 'uploaded')
       setActiveRowId(result.dataset.rows[0]?.id ?? null)
+      setFeedback(null)
+
+      try {
+        const saveResult = await saveUploadedDataset(repository, result.dataset)
+
+        setStoredDatasets((current) =>
+          [
+            saveResult.meta,
+            ...current.filter((candidate) => candidate.id !== saveResult.meta.id),
+          ].sort((left, right) => right.savedAt.localeCompare(left.savedAt)),
+        )
+
+        if (!saveResult.lastActiveSaved) {
+          setFeedback({
+            tone: 'warning',
+            title: 'Upload opened but was not fully remembered',
+            message:
+              'The file is open for this session, but browser storage could not remember it as your last active dataset.',
+          })
+        }
+      } catch (storageError) {
+        setFeedback({
+          tone: 'warning',
+          title: 'Upload opened but could not be saved',
+          message:
+            storageError instanceof Error
+              ? `The file was parsed successfully, but browser storage rejected the save: ${storageError.message}`
+              : 'The file was parsed successfully, but browser storage rejected the save.',
+        })
+      }
     } catch (importError) {
-      setActiveDataset(null)
-      setActiveDatasetSelection(null, 'uploaded')
-      setActiveRowId(null)
-      setError(
-        importError instanceof Error
-          ? `Failed to import ${file.name}: ${importError.message}`
-          : `Failed to import ${file.name}.`,
-      )
+      setFeedback({
+        tone: 'error',
+        title: 'Upload could not be read',
+        message:
+          importError instanceof Error
+            ? `Failed to import ${file.name}: ${importError.message}`
+            : `Failed to import ${file.name}.`,
+      })
     } finally {
       setIsImporting(false)
     }
@@ -218,25 +281,21 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
       )
 
       if (activeDatasetOrigin === 'uploaded' && activeDatasetId === datasetId) {
-        const fallback = files[0]
-
-        if (!fallback) {
-          setActiveDataset(null)
-          setActiveDatasetSelection(null, null)
-          setActiveRowId(null)
-          return
-        }
-
-        selectBundledDataset(fallback.id)
+        setActiveDataset(null)
+        setActiveDatasetSelection(null, null)
+        setActiveRowId(null)
       }
 
-      setError(null)
+      setFeedback(null)
     } catch (removeError) {
-      setError(
-        removeError instanceof Error
-          ? `Failed to delete stored dataset: ${removeError.message}`
-          : 'Failed to delete stored dataset.',
-      )
+      setFeedback({
+        tone: 'warning',
+        title: 'Stored dataset could not be deleted',
+        message:
+          removeError instanceof Error
+            ? `Browser storage refused to delete the upload: ${removeError.message}`
+            : 'Browser storage refused to delete the upload.',
+      })
     }
   }
 
@@ -255,7 +314,7 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
     activeDatasetOrigin,
     activeDatasetId,
     activeRow,
-    error,
+    feedback,
     isImporting,
     isRestoring,
     storedDatasets,
@@ -265,36 +324,4 @@ export function useActiveDataset(files: BundledDatasetFile[]): ActiveDatasetStat
     deleteStoredDataset: removeStoredDataset,
     selectRow,
   }
-}
-
-function createInitialState(files: BundledDatasetFile[]): InitialState {
-  const initialFile = files[0]
-
-  if (!initialFile) {
-    return {
-      activeDataset: null,
-      activeDatasetOrigin: null,
-      activeDatasetId: null,
-      activeRow: null,
-      error: null,
-    }
-  }
-
-  const result = loadBundledDataset(initialFile)
-
-  return result.status === 'success'
-    ? {
-        activeDataset: result.dataset,
-        activeDatasetOrigin: 'bundled',
-        activeDatasetId: initialFile.id,
-        activeRow: result.dataset.rows[0] ?? null,
-        error: null,
-      }
-    : {
-        activeDataset: null,
-        activeDatasetOrigin: 'bundled',
-        activeDatasetId: initialFile.id,
-        activeRow: null,
-        error: result.message,
-      }
 }

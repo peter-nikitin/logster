@@ -65,6 +65,16 @@ describe('parseLogDataset', () => {
     ).toThrow('Row 1 must have 3 or 4 items, received 2.')
   })
 
+  it('throws when a row is not an array', () => {
+    expect(() =>
+      parseLogDataset({
+        datasetId: 'dataset-1',
+        datasetName: 'dataset.json',
+        rawContent: JSON.stringify([{ bad: true }]),
+      }),
+    ).toThrow('Row 1 must be an array.')
+  })
+
   it('throws for invalid timestamp, method, and message shapes', () => {
     expect(() =>
       parseLogDataset({

@@ -11,6 +11,7 @@ describe('restoreStoredDatasets', () => {
     expect(result).toEqual({
       datasets: [],
       lastActiveDataset: null,
+      lastActiveDatasetMissing: false,
     })
   })
 
@@ -33,6 +34,21 @@ describe('restoreStoredDatasets', () => {
         },
       ],
       lastActiveDataset: dataset,
+      lastActiveDatasetMissing: false,
+    })
+  })
+
+  it('marks the last active dataset as missing when its record is gone', async () => {
+    const repository = new InMemoryDatasetRepository({
+      lastActiveId: 'uploaded:missing-dataset',
+    })
+
+    const result = await restoreStoredDatasets(repository)
+
+    expect(result).toEqual({
+      datasets: [],
+      lastActiveDataset: null,
+      lastActiveDatasetMissing: true,
     })
   })
 })

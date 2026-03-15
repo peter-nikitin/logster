@@ -7,6 +7,7 @@ export const uiTestIds = {
   datasetTable: 'dataset-table',
   datasetRow: 'dataset-row',
   uploadInput: 'upload-input',
+  emptyState: 'empty-state',
   errorState: 'error-state',
   tableColumnResizeHandle: (columnId: string) => `table-column-resize-${columnId}`,
 } as const

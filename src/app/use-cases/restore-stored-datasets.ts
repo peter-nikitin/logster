@@ -4,6 +4,7 @@ import type { LogDataset } from '@/domain/log-dataset/entities/log-dataset'
 export type RestoreStoredDatasetsResult = {
   datasets: StoredDatasetMeta[]
   lastActiveDataset: LogDataset | null
+  lastActiveDatasetMissing: boolean
 }
 
 export async function restoreStoredDatasets(
@@ -16,6 +17,7 @@ export async function restoreStoredDatasets(
     return {
       datasets,
       lastActiveDataset: null,
+      lastActiveDatasetMissing: false,
     }
   }
 
@@ -24,5 +26,6 @@ export async function restoreStoredDatasets(
   return {
     datasets,
     lastActiveDataset,
+    lastActiveDatasetMissing: lastActiveDataset === null,
   }
 }
