@@ -35,11 +35,11 @@ export function DatasetSourcePanel({
 }: DatasetSourcePanelProps) {
   return (
     <Card
-      className="border-border/70 bg-card/95 shadow-sm"
+      className="h-full"
       data-testid={uiTestIds.datasetSourcePanel}
     >
-      <CardHeader className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
+      <CardHeader className="space-y-2 px-0 pt-0">
+        <div className="flex items-center justify-between gap-2">
           <div>
             <CardTitle>Datasets</CardTitle>
             <CardDescription>
@@ -49,11 +49,11 @@ export function DatasetSourcePanel({
           <Badge variant="secondary">{bundledDatasets.length + storedDatasets.length}</Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-5">
+      <CardContent className="space-y-4 px-0 pb-0 pt-0">
         <UploadDatasetButton isImporting={isImporting} onImportFile={onImportFile} />
 
-        <section className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
+        <section className="space-y-2">
+          <div className="flex items-center justify-between gap-2">
             <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
               Stored uploads
             </p>
@@ -61,13 +61,13 @@ export function DatasetSourcePanel({
           </div>
 
           {isRestoring ? (
-            <div className="rounded-xl border border-border/70 bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+            <div className="rounded-lg px-3 py-2 text-sm text-muted-foreground">
               Restoring stored datasets…
             </div>
           ) : null}
 
           {!isRestoring && storedDatasets.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border/70 bg-muted/20 px-4 py-4 text-sm text-muted-foreground">
+            <div className="rounded-lg px-3 py-3 text-sm text-muted-foreground">
               Uploaded datasets saved in this browser will appear here.
             </div>
           ) : null}
@@ -81,14 +81,14 @@ export function DatasetSourcePanel({
                 key={dataset.id}
                 data-testid={uiTestIds.storedDatasetItem}
                 className={cn(
-                  'flex items-stretch gap-2 rounded-xl border border-border/70 p-2',
-                  isActive && 'border-primary/40 bg-primary/10',
+                  'flex items-stretch gap-1.5 rounded-lg p-1.5',
+                  isActive && 'bg-muted',
                 )}
               >
                 <Button
                   type="button"
                   variant="ghost"
-                  className="h-auto flex-1 justify-start rounded-lg px-3 py-3 text-left hover:bg-muted/60"
+                  className="h-auto flex-1 justify-start rounded-md px-2.5 py-2.5 text-left hover:bg-muted"
                   onClick={() => onSelectStored(dataset.id)}
                 >
                   <span className="flex w-full items-start justify-between gap-3">
@@ -143,8 +143,8 @@ export function DatasetSourcePanel({
                 type="button"
                 variant="ghost"
                 className={cn(
-                  'h-auto w-full justify-start rounded-xl border border-border/70 px-4 py-4 text-left hover:bg-muted/60',
-                  isActive && 'border-primary/40 bg-primary/10 hover:bg-primary/10',
+                  'h-auto w-full justify-start rounded-lg px-3 py-3 text-left hover:bg-muted',
+                  isActive && 'bg-muted hover:bg-muted',
                 )}
                 onClick={() => onSelectBundled(dataset.id)}
               >

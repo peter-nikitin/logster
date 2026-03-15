@@ -82,7 +82,7 @@ export function DatasetTable({
             />
           ))}
         </colgroup>
-        <TableHeader className="sticky top-0 z-10 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+        <TableHeader className="sticky top-0 z-10 bg-background">
           <TableRow className="hover:bg-transparent">
             {tableColumnConfig.map((column) => (
               <TableHead
@@ -95,7 +95,7 @@ export function DatasetTable({
                   type="button"
                   aria-label={`Resize ${column.label} column`}
                   data-testid={uiTestIds.tableColumnResizeHandle(column.id)}
-                  className="absolute inset-y-0 right-0 w-2.5 cursor-col-resize rounded-full border-r border-border/70 bg-transparent hover:bg-accent/40"
+                  className="absolute inset-y-0 right-0 w-2.5 cursor-col-resize rounded-full bg-transparent hover:bg-accent/40"
                   onMouseDown={(event) =>
                     handleResizeStart(column.id, column.minWidth, event)
                   }
@@ -107,8 +107,8 @@ export function DatasetTable({
         <TableBody>
           {rows.length === 0 ? (
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={tableColumnConfig.length} className="px-6 py-10">
-                <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-muted/20 px-6 py-8 text-center">
+              <TableCell colSpan={tableColumnConfig.length} className="px-4 py-8">
+                <div className="flex flex-col items-center justify-center gap-3 rounded-lg px-4 py-6 text-center">
                   <p className="text-sm font-medium text-foreground">
                     No rows match the current filter stack.
                   </p>

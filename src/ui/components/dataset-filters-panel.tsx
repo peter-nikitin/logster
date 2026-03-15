@@ -63,11 +63,11 @@ export function DatasetFiltersPanel({
 
   return (
     <Card
-      className="border-border/70 bg-card/95 shadow-sm"
+      className="h-full"
       data-testid={uiTestIds.filterPanel}
     >
-      <CardHeader className="space-y-2 px-4 py-4">
-        <div className="flex items-center justify-between gap-3">
+      <CardHeader className="space-y-2 px-0 pt-0">
+        <div className="flex items-center justify-between gap-2">
           <div>
             <CardTitle>Filters</CardTitle>
             <CardDescription>
@@ -79,9 +79,9 @@ export function DatasetFiltersPanel({
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4 px-4 pb-4 pt-0">
+      <CardContent className="space-y-3 px-0 pb-0 pt-0">
         <section className="space-y-2">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-2">
             <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
               Facet tree
             </p>
@@ -99,19 +99,19 @@ export function DatasetFiltersPanel({
           </div>
 
           {isDisabled ? (
-            <div className="rounded-xl border border-dashed border-border/70 bg-muted/20 px-4 py-4 text-sm text-muted-foreground">
+            <div className="rounded-lg px-3 py-3 text-sm text-muted-foreground">
               Open a dataset to inspect methods and drill into nested log texts.
             </div>
           ) : null}
 
           {!isDisabled && methods.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border/70 bg-muted/20 px-4 py-4 text-sm text-muted-foreground">
+            <div className="rounded-lg px-3 py-3 text-sm text-muted-foreground">
               No facets are available for the current dataset.
             </div>
           ) : null}
 
           {!isDisabled ? (
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {methods.map((methodEntry) => {
                 const methodFacetKey = methodEntry.method
                 const isExpanded = expandedMethodSet.has(methodEntry.method)
@@ -135,7 +135,7 @@ export function DatasetFiltersPanel({
                 return (
                   <div
                     key={methodEntry.method}
-                    className="rounded-lg border border-border/70 bg-background/80"
+                    className="rounded-lg"
                   >
                     <FacetRow
                       label={methodEntry.method}
@@ -155,7 +155,7 @@ export function DatasetFiltersPanel({
                     />
 
                     {isExpanded ? (
-                      <div className="space-y-0.5 border-t border-border/60 px-1.5 py-1">
+                      <div className="space-y-0.5 border-t border-border/60 px-1 py-0.5">
                         {methodEntry.messages.map((messageEntry) => {
                           const facet = {
                             method: methodEntry.method,
@@ -246,17 +246,17 @@ function FacetRow({
   return (
     <div
       className={cn(
-        'group flex min-h-8 items-center gap-1.5 rounded-md px-1.5 py-1 transition-colors',
-        isIncluded && 'bg-primary/10',
+        'group flex min-h-7 items-center gap-1 rounded-md px-1 py-0.5 transition-colors',
+        isIncluded && 'bg-muted',
         isExcluded && 'bg-destructive/8',
-        level === 'child' && 'pl-4',
+        level === 'child' && 'pl-3',
       )}
     >
       {onToggleExpanded ? (
         <button
           type="button"
           data-testid={expandTestId}
-          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-muted-foreground hover:bg-muted/70"
+          className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm text-muted-foreground hover:bg-muted"
           onClick={onToggleExpanded}
           aria-label={isExpanded ? 'Collapse facet' : 'Expand facet'}
         >
@@ -267,10 +267,10 @@ function FacetRow({
           )}
         </button>
       ) : (
-        <span className="h-5 w-3 shrink-0" />
+        <span className="h-4 w-3 shrink-0" />
       )}
 
-      <label className="flex min-w-0 flex-1 items-center gap-2">
+      <label className="flex min-w-0 flex-1 items-center gap-1.5">
         <input
           ref={checkboxRef}
           type="checkbox"
@@ -283,7 +283,7 @@ function FacetRow({
           <span
             className={cn(
               'block truncate leading-5 text-foreground',
-              level === 'root' ? 'font-mono text-[12px]' : 'text-[12px]',
+              level === 'root' ? 'font-mono text-[11px]' : 'text-[11px]',
               isExcluded && 'line-through text-foreground/70',
             )}
           >
@@ -295,7 +295,7 @@ function FacetRow({
       <Badge
         variant={isIncluded ? 'default' : 'outline'}
         className={cn(
-          'h-5 shrink-0 rounded-md px-1.5 py-0 text-[10px] leading-4',
+          'h-4 shrink-0 rounded-md px-1.5 py-0 text-[10px] leading-4',
           isExcluded && 'border-destructive/40 bg-destructive/10 text-destructive',
         )}
       >
@@ -308,8 +308,8 @@ function FacetRow({
         size="sm"
         data-testid={invertTestId}
         className={cn(
-          'h-5 w-5 shrink-0 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100',
-          !isExcluded && 'text-muted-foreground hover:bg-muted/70 hover:text-foreground',
+          'h-4 w-4 shrink-0 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100',
+          !isExcluded && 'text-muted-foreground hover:bg-muted hover:text-foreground',
           isExcluded &&
             'opacity-100 bg-destructive/90 text-destructive-foreground hover:bg-destructive/90',
         )}

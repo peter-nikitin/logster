@@ -22,30 +22,30 @@ export function EmptyState({
 
   return (
     <Card
-      className="border-dashed border-border/80 bg-card/80 shadow-sm"
+      className=""
       data-testid={uiTestIds.emptyState}
     >
-      <CardContent className="flex min-h-[340px] flex-col items-start justify-center gap-6 p-8 md:p-10">
+      <CardContent className="flex min-h-[340px] flex-col items-start justify-center gap-5 px-0 py-6 md:py-8">
         <Badge variant="secondary" className="gap-2 font-mono text-[11px] uppercase tracking-[0.16em]">
           <Upload className="h-3.5 w-3.5" />
           Workspace empty
         </Badge>
 
-        <div className="max-w-2xl space-y-3">
+        <div className="max-w-2xl space-y-2">
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">
             {title}
           </h2>
-          <p className="text-sm leading-7 text-muted-foreground">{description}</p>
+          <p className="text-sm leading-6 text-muted-foreground">{description}</p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           {!isSidebarOpen ? (
             <Button type="button" variant="outline" onClick={onOpenSidebar}>
               <PanelLeftOpen className="h-4 w-4" />
               <span>Open sidebar</span>
             </Button>
           ) : null}
-          <Badge variant="outline" className="px-3 py-1.5 text-xs text-muted-foreground">
+          <Badge variant="outline" className="px-2.5 py-1 text-xs text-muted-foreground">
             Bundled files and uploads live in the left panel
           </Badge>
         </div>

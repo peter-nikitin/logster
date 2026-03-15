@@ -1,4 +1,5 @@
 import { Columns3Cog, Filter, FolderOpen } from 'lucide-react'
+import logsterLogo from '@/assets/logster.png'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { LogDataset } from '@/domain/log-dataset/entities/log-dataset'
@@ -24,9 +25,9 @@ export function WorkspaceToolbar({
   onOpenSidebarPanel,
 }: WorkspaceToolbarProps) {
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border/70 bg-background/90 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="flex min-w-0 items-center gap-3">
-        <div className="flex items-center gap-2">
+    <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border/70 bg-background px-3 py-2">
+      <div className="flex min-w-0 items-center gap-2.5">
+        <div className="flex items-center gap-1.5">
           <Button
             type="button"
             variant={isSidebarOpen && activeSidebarPanel === 'datasets' ? 'default' : 'outline'}
@@ -49,17 +50,24 @@ export function WorkspaceToolbar({
           </Button>
         </div>
 
-        <div className="min-w-0">
-          <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
-            Logster
-          </p>
-          <div className="truncate text-sm font-medium text-foreground">
-            {activeDataset ? activeDataset.name : 'No active dataset'}
+        <div className="flex min-w-0 items-center gap-2">
+          <img
+            src={logsterLogo}
+            alt="Logster"
+            className="h-7 w-7 shrink-0 object-contain"
+          />
+          <div className="min-w-0">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+              Logster
+            </p>
+            <div className="truncate text-sm text-foreground">
+              {activeDataset ? activeDataset.name : 'No active dataset'}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-1.5">
         <Button
           type="button"
           variant="outline"

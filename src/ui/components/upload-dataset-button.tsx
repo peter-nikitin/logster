@@ -53,8 +53,8 @@ export function UploadDatasetButton({
   }
 
   return (
-    <div className="rounded-xl border border-dashed border-border/80 bg-muted/30 p-4">
-      <div className="mb-3 space-y-1">
+    <div className="rounded-lg p-3">
+      <div className="mb-2 space-y-1">
         <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
           Local upload
         </p>
@@ -64,10 +64,10 @@ export function UploadDatasetButton({
       </div>
       <label
         className={cn(
-          'block cursor-pointer rounded-xl border border-dashed px-4 py-8 text-center transition-colors',
+          'block cursor-pointer rounded-lg px-3 py-6 text-center transition-colors',
           isDragging
-            ? 'border-primary bg-primary/10'
-            : 'border-border/80 bg-background/80 hover:bg-accent hover:text-accent-foreground',
+            ? 'bg-muted'
+            : 'hover:bg-accent hover:text-accent-foreground',
           isImporting && 'pointer-events-none opacity-60',
         )}
         onDragOver={handleDragOver}
@@ -81,9 +81,9 @@ export function UploadDatasetButton({
           data-testid={uiTestIds.uploadInput}
           onChange={handleFileChange}
         />
-        <span className="flex flex-col items-center gap-3">
-          <span className="rounded-full border border-border/80 bg-muted/60 p-3 text-muted-foreground">
-            <FileUp className="h-5 w-5" />
+        <span className="flex flex-col items-center gap-2.5">
+          <span className="rounded-full bg-muted p-2.5 text-muted-foreground">
+            <FileUp className="h-4 w-4" />
           </span>
           <span className="space-y-1">
             <span className="block text-sm font-medium text-foreground">

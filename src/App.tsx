@@ -144,7 +144,7 @@ function App() {
 
         <section
           ref={contentRef}
-          className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4"
+          className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-hidden p-3"
           aria-live="polite"
         >
           {feedback ? (
@@ -156,8 +156,8 @@ function App() {
           ) : null}
 
           {activeDataset ? (
-            <div className="flex min-h-0 flex-1 gap-4 overflow-hidden">
-              <Card className="min-h-0 min-w-0 flex-1 overflow-hidden border-border/70 bg-card/95 shadow-sm">
+            <div className="flex min-h-0 flex-1 gap-3 overflow-hidden">
+              <Card className="min-h-0 min-w-0 flex-1 overflow-hidden">
                 <CardContent className="flex h-full min-h-0 p-0">
                   <DatasetTable
                     rows={derivedViewerState.visibleRows}

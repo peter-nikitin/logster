@@ -17,10 +17,10 @@ export function ErrorState({
   return (
     <div
       className={cn(
-        'rounded-xl border p-4',
+        'rounded-lg px-3 py-2.5',
         isWarning
-          ? 'border-primary/25 bg-primary/10 text-foreground'
-          : 'border-destructive/30 bg-destructive/10 text-destructive',
+          ? 'bg-muted text-foreground'
+          : 'bg-destructive/10 text-destructive',
       )}
       data-testid={uiTestIds.errorState}
       role="alert"
